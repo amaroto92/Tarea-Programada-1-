@@ -7,7 +7,41 @@ int main(int argc, char *argv[]){
 
 // Cliente Proceso Hijo.
 
-//FALTA ACA** //
+// Funcion que agarra el puerto:
+
+// FALTA
+
+//Funcion que agarra el IP del servidor:
+
+// FALTA
+
+// 1. Inicializar el Socket.
+
+int idSocketCliente
+
+idSocketCliente = socket (AF_INET, SOCK_STREAM, 0);
+
+//PARAMETROS
+//AF_INET: deja que se conecte entre computadoras distintas.
+//SOCK_STREAM: indica que el socket es orientado a conexion.
+//3er parametro se pone 0.
+
+//2. Connect 
+
+struct sockaddr_in DireccionSocketServidor;
+
+DireccionSocketServidor.sin_family = AF_INET;
+DireccionSocketServidor.sin_addr.s_addr = ; // 	IP DEL SERVIDOR
+DireccionSocketServidor.sin_port = ; // # DE PUERTO CLIENTE
+
+connect(idSocketCliente,(struct sockaddr *) &DireccionSocketServidor,sizeof(DireccionSocketServidor));
+
+printf(	"Conexion exitosa!");
+
+
+
+
+//** //
 
 
 
@@ -33,7 +67,7 @@ struct sockaddr_in DireccionSocketServidor;
 DireccionSocketServidor.sin_family = AF_INET;
 //AF_INET: deja que se conecte entre computadoras distintas.
 
-DireccionSocketServidor.sin_port = // Aqui va la Funcion que agarra el puerto del amigo de un .txt *FALTA*;
+DireccionSocketServidor.sin_port = // agarra el puerto que habilita de su computadora *FALTA*;
 // Aqui se pone el puerto al que quiere atender (cliente)
 
 DireccionSocketServidor.sin_addr.s_addr =INADDR_ANY; 
@@ -70,4 +104,3 @@ idConexionCS = accept (idSocketServidor,(struct sockaddr *) &DireccionSocketClie
 
 } // Final MAIN
 
-/*David Murillo Salas 201108648

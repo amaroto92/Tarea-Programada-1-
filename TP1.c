@@ -68,7 +68,7 @@ DireccionSocketServidor.sin_family = AF_INET;
 //AF_INET: deja que se conecte entre computadoras distintas.
 
 DireccionSocketServidor.sin_port = // agarra el puerto que habilita de su computadora *FALTA*;
-// Aqui se pone el puerto al que quiere atender (cliente)
+// Aqui se pone el puerto  (servidor)
 
 DireccionSocketServidor.sin_addr.s_addr =INADDR_ANY; 
 //INADDR_ANY: Enlaza cualquier IP.

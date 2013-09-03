@@ -9,8 +9,8 @@ int main()
     struct
     {
         char contacto[81];
-       unsigned short int puerto;
-        char ip[16];/*esta en char para probarlo mas facil, pero en realidad es uint32_t*/
+        unsigned short int puerto;
+        char ip[16]; /*esta en char para probarlo mas facil, pero en realidad es uint32_t*/
        
     } agenda [1000];
  
@@ -22,6 +22,63 @@ int main()
     char contactoc [81];
     unsigned short int puertoc;
     char ipc[16];/*esta en int para probarlo mas facil, pero en realidad es uint32_t*/
+
+
+	archivob = fopen("agenda.dat", "rt");
+    	if (archivob != NULL)
+    	{
+        puts("Leyendo datos...");
+        while (! feof(archivob)) 
+        {
+            /* Intento leer cada dato, y lo guardo si lo he conseguido */
+            
+	    fgets(nombrecontacto, 81, archivob);       
+            if (feof(archivob)) break;  /* Si no he podido, interrumpo */
+            if (strlen(nombrecontacto) > 0)      
+            nombrecontacto[strlen(nombrecontacto) -1]  = '\0';
+            strcpy(agenda[ultimocontacto+1].contacto, nombrecontacto);
+
+            fgets(nombrecontacto, 80, archivob);       
+            if (feof(archivob)) break;
+            if (strlen(nombrecontacto) > 0)
+            nombrecontacto[strlen(nombrecontacto)  -1]  ='\0';
+            strcpy(agenda[ultimocontacto+1].ip, nombrecontacto);
+ 
+            
+ 	   fgets(nombrecontacto, 20, archivob);
+           
+           if (feof(archivob)) break;
+           sscanf(nombrecontacto, "%hd", &agenda[ultimocontacto+1].puerto);
+	 
+	   
+            /* Si pude leer todo, hay una ficha mas */
+            ultimocontacto ++;
+        }
+        fclose(archivob);
+    }
+ 
+    printf("Leidos %d datos", ultimocontacto+1);
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
    
  
    
@@ -56,16 +113,14 @@ int main()
                 break;
  
  
-            case 2:/* Ver todos los nombres de la lista de contactos mediante un ciclo que recorre el arreglo de la variable agendda de tipo struct */
-                puts ("Lista de contactos\n");
+            case 2:/* Ver todos los nombres de la lista de contactos mediante un ciclo que recorre el arreglo de la variable agenda de tipo struct */
+               
+	        puts ("Lista de contactos\n");
 		
-		archivob = fopen("agenda.dat", "ab");
-		
-
-
                 for (i=0; i<=ultimocontacto; i++)
                     puts (agenda[i].contacto);
-                break;
+                
+		break;
  
  
             case 3: /* Recibe el nombre del contacto por parte del usuario y */
@@ -80,17 +135,10 @@ int main()
 			strcpy(ipc,agenda[i].ip);
                         
 
-<<<<<<< HEAD
-printf("Nombre: %s \n",contactoc);
-printf("Puerto: %hu \n",puertoc);
-printf("Direccion IP: %s",ipc);
+			printf("Nombre: %s \n",contactoc);
+			printf("Puerto: %hu \n",puertoc);
+			printf("Direccion IP: %s",ipc);
                      }
-=======
-                        printf("%s",contactoc);
-                        printf("%hu",puertoc);
-                        printf("%d",ipc);
-                    }
->>>>>>> 72b0029356698b712ff9108444e5a0ad19c16009
 
 
                 break;
@@ -104,7 +152,7 @@ printf("Direccion IP: %s",ipc);
  
     // Finalmente, guardo los cambios
     
-	archivob = fopen("agenda.dat", "ab");
+	archivob = fopen("agenda.dat", "wt");
     
  
     for (i=0; i<=ultimocontacto; i++)

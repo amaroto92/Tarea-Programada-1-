@@ -78,10 +78,17 @@ int main()
 			strcpy(ipc,agenda[i].ip);
                         
 
+<<<<<<< HEAD
 printf("Nombre: %s \n",contactoc);
 printf("Puerto: %hu \n",puertoc);
 printf("Direccion IP: %s",ipc);
                      }
+=======
+                        printf("%s",contactoc);
+                        printf("%hu",puertoc);
+                        printf("%d",ipc);
+                    }
+>>>>>>> 72b0029356698b712ff9108444e5a0ad19c16009
 
 
                 break;

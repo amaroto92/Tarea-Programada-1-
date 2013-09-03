@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
+// FALTA QUE GUARDE LOS DATOS DESPUES DE CERRADO EL PROGRAMA!
+// FALTA PASAR EL CHAR A IP
  
 int main()
 {

@@ -8,7 +8,7 @@ int main()
     {
         char contacto[81];
        unsigned short int puerto;
-        int ip;/*esta en int para probarlo mas facil, pero en realidad es uint32_t*/
+        char ip[16];/*esta en char para probarlo mas facil, pero en realidad es uint32_t*/
        
     } agenda [1000];
  
@@ -19,7 +19,7 @@ int main()
     int i; /* Para recorrer los datos con "for" */
     char contactoc [81];
     unsigned short int puertoc;
-    int ipc;/*esta en int para probarlo mas facil, pero en realidad es uint32_t*/
+    char ipc[16];/*esta en int para probarlo mas facil, pero en realidad es uint32_t*/
    
  
    
@@ -44,11 +44,11 @@ int main()
                 printf ("Escriba el nombre del contacto nuevo: ");
                 scanf ("%s",agenda[ultimocontacto+1].contacto);
  
-                printf ("Escriba el puerto del nuevo contacto");
+                printf ("Escriba el puerto del nuevo contacto: ");
                 scanf ("%hu",&agenda[ultimocontacto+1].puerto);
  
-                printf ("Escriba la direccion ip del nuevo contacto");
-                scanf ("%d",&agenda[ultimocontacto+1].ip);
+                printf ("Escriba la direccion ip del nuevo contacto: ");
+                scanf ("%s",agenda[ultimocontacto+1].ip);
  
                 ultimocontacto ++;
                 break;
@@ -56,13 +56,18 @@ int main()
  
             case 2:/* Ver todos los nombres de la lista de contactos mediante un ciclo que recorre el arreglo de la variable agendda de tipo struct */
                 puts ("Lista de contactos\n");
+		
+		archivob = fopen("agenda.dat", "ab");
+		
+
+
                 for (i=0; i<=ultimocontacto; i++)
                     puts (agenda[i].contacto);
                 break;
  
  
             case 3: /* Recibe el nombre del contacto por parte del usuario y */
-                printf ("Escriba el nombre del contacto");
+                printf ("Escriba el nombre del contacto: ");
                 scanf ("%s",nombrecontacto);
  
                 for (i=0; i<=ultimocontacto; i++)
@@ -70,12 +75,13 @@ int main()
                     {
                         strcpy(contactoc,agenda[i].contacto);
                         puertoc=agenda[i].puerto;
-                        ipc= agenda[i].ip;
+			strcpy(ipc,agenda[i].ip);
+                        
 
-printf("%s",contactoc);
-printf("%hu",puertoc);
-printf("%d",ipc);
-                     
+printf("Nombre: %s \n",contactoc);
+printf("Puerto: %hu \n",puertoc);
+printf("Direccion IP: %s",ipc);
+                     }
 
 
                 break;
@@ -88,14 +94,15 @@ printf("%d",ipc);
  
  
     // Finalmente, guardo los cambios
-    archivob = fopen("agenda.dat", "ab");
-    puts("Guardando contacto\n");
+    
+	archivob = fopen("agenda.dat", "ab");
+    
  
     for (i=0; i<=ultimocontacto; i++)
     {
         fprintf (archivob, "%s\n", agenda[i].contacto);
         fprintf (archivob, "%u\n", agenda[i].puerto);
-        fprintf (archivob, "%u\n", agenda[i].ip);
+        fprintf (archivob, "%s\n", agenda[i].ip);
        
     }
     fclose(archivob);

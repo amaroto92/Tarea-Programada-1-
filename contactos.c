@@ -72,10 +72,10 @@ int main()
                         puertoc=agenda[i].puerto;
                         ipc= agenda[i].ip;
 
-printf("%s",contactoc);
-printf("%hu",puertoc);
-printf("%d",ipc);
-                     
+                        printf("%s",contactoc);
+                        printf("%hu",puertoc);
+                        printf("%d",ipc);
+                    }
 
 
                 break;

@@ -97,7 +97,7 @@ socklen_t largodircliente = sizeof(DireccionSocketCliente); // Largo de estructu
 
 idConexionCS = accept (idSocketServidor,(struct sockaddr *) &DireccionSocketCliente, &largodircliente); // Hace un cast de sockaddr_in a sockadrr.
 
-//5. Ya se tiene conexion Cliente-Servidor. Sigue con el read y write para el intercambio de mensajes. Aca ya va el fork.
+//5. READ
 
 
 } 

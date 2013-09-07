@@ -2,7 +2,7 @@
 #include <string.h>
 
 
-int main()
+void main()
 {
  /* Se define la estructura y se crea un arreglo de tipo struct llamado agenda donde van a ir todos los contactos */
     struct
@@ -129,7 +129,6 @@ archivob = fopen("agenda.dat", "wt"); // abre el archivo binario
     }
     fclose(archivob); // cierra el archivo binario
  
-    return 0;
 }
 
     

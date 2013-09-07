@@ -37,17 +37,18 @@ archivob = fopen("agenda.dat", "rt");
             buffer[strlen(buffer) -1] = '\0';/*Establece que el len de la linea -1 va a ser el fin del string */
             strcpy(agenda[ultimocontacto+1].contacto, buffer);/*Copia la linea que pertenece a contacto en el array agenda */
 
-            /*Aca se establece el mismo proceso del contacto nada mas que con el ip*/
+ 
+            /*Aca se establece el mismo proceso del contacto, nada mas que el modo de copia cambia por ser un short int */
+           fgets(buffer, 20, archivob);
+           if (feof(archivob)) break;
+           sscanf(buffer, "%hd", &agenda[ultimocontacto+1].puerto);
+           
+            /*Lo mismo con la direccion ip*/
             fgets(buffer, 80, archivob);
             if (feof(archivob)) break;
             if (strlen(buffer) > 0)
             buffer[strlen(buffer) -1] ='\0';
             strcpy(agenda[ultimocontacto+1].ip, buffer);
- 
-            /*Lo mismo con puerto, nada mas que el modo de copia cambia por ser un short int */
-           fgets(buffer, 20, archivob);
-           if (feof(archivob)) break;
-           sscanf(buffer, "%hd", &agenda[ultimocontacto+1].puerto);
 
             /* Si logra leerlo todo, existe un contacto mas */
             ultimocontacto ++;
@@ -103,13 +104,13 @@ break;
                     {
                         strcpy(contactoc,agenda[i].contacto);
                         puertoc=agenda[i].puerto;
-			strcpy(ipc,agenda[i].ip);
-			printf("Tenemos los siguientes datos en memoria para comunicarse con:\n");	
-			printf("Nombre: %s \n",contactoc);
-			printf("Puerto: %hu \n",puertoc);
-			printf("Direccion IP: %s \n",ipc);
-			printf("Si desea empezar a comunicarse con esta persona digite 0 \n ");
-			
+                        strcpy(ipc,agenda[i].ip);
+                        printf("Tenemos los siguientes datos en memoria para comunicarse con:\n");	
+                        printf("Nombre: %s \n",contactoc);
+                        printf("Puerto: %hu \n",puertoc);
+                        printf("Direccion IP: %s \n",ipc);
+                    printf("Si desea empezar a comunicarse con esta persona digite 0 \n ");
+
 
                      }
                 break;

@@ -13,6 +13,8 @@
 
 void servidor(int puertolocal){ // Servidor Proceso Padre.
 
+char buffer1[256];
+
 printf("Este es el puerto servidor que mandaron desde el main: %d\n",puertolocal); // Para checkear
 
 
@@ -99,10 +101,29 @@ fprintf(stderr,"No se pueden aceptar solicitudes servidor\n\a");
 exit(1); // Manejo de errores el idConexionCS devuelve un negativo si da error y lo mandamos al std error.
 }
 
-
 //5. Read. 
 
 printf(	"Llegue al read.\n");
+
+while(1){ // ciclo infinito
+
+int idread; // id del read
+
+bzero(buffer1,256); // limpia el buffer
+
+idread = read(idConexionCS,buffer1,255); // lee del buffer 
+
+if (idread < 0){
+
+fprintf(stderr,"No se pudo leer servidor\n\a");
+exit(1); // Manejo de errores el n devuelve un negativo si da error
+
+}
+printf("Mensaje : %s",buffer1);
+
+}
+
+
 
 } // Final funcion. Servidor
 
@@ -123,7 +144,7 @@ printf("Este es el ip cliente que mandaron desde el main: %s\n",ipc); // Checkeo
 
 int idSocketCliente; 
 
-char buffer2[256];// Mensaje a enviar
+char buffer1[256];// Mensaje a enviar
 
 int hayconexion; // variable para salirse del while infinito cuando hay alguna conexion.
 
@@ -181,10 +202,26 @@ if(hayconexion=connect(idSocketCliente,(struct sockaddr *) &DireccionSocketServi
 
 //3. Write
 
+while(1){
+
+int idwrite; // Identificador para el write
+
+puts("Escriba su mensaje: \n");
+
+bzero(buffer1,256); // Limpia el buffer
+
+fgets(buffer1,255,stdin); // Agarra datos del stdin
+
+idwrite = write(idSocketCliente,buffer1,strlen(buffer1)); // escribe
+  if (idwrite < 0){
+    fprintf(stderr,"No se pudo escribir, cliente \n\a");
+    exit(1); // Manejo de errores.
+	}
+
+printf("Mensaje Enviado: %s ",buffer1);
 
 
-
-printf(	"Soy el cliente y llegue hasta el write, Conexion exitosa!");
+}
 
 } // Final cliente
 
@@ -326,7 +363,7 @@ archivob = fopen("agenda.dat", "wt"); // abre el archivo binario
 
 int puertolocal;
 //puertolocal = Agarra el puerto propio de un archivo. Falta esto.
-puertolocal = 14456; // puesto xxxxx para prueba.
+puertolocal = 14535; // puesto xxxxx para prueba.
 
 
 // Division de procesos FORK 

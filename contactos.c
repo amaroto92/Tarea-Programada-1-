@@ -14,6 +14,7 @@ void main()
     } agenda [1000]; // La agenda tendra la capacidad de guardar 1000 contactos
  
     FILE* archivob; /* El archivo de tipo file que va a contener a los contactos */
+    FILE* archivob2;/* El archivo de tipo file que va a contener el puerto de escucha local */
     int opcion;/* La opcion escogida del menu */
     opcion=5; // se inicializa en cualquier valor para que no tome el valor default de 0 
     char buffer[200]; /*Lee del teclado*/
@@ -58,21 +59,7 @@ archivob = fopen("agenda.dat", "rt");
     }
     printf(" %d Contactos Existentes en la Agenda\n", ultimocontacto+1);
     
-    /* Proceso de lectura del archivo del puerto local */
-    
-    archivob = fopen("puertolocal.dat", "rt"); 
-     if (archivob != NULL)
-     {
-        while (! feof(archivob)) 
-        {
-           /*Guarda lo leido del archivo del puerto local en la variable para su posterior uso*/
-           fgets(buffer, 20, archivob);
-           if (feof(archivob)) break;
-           sscanf(buffer, "%hd", &puertolocal);
-        }
-        fclose(archivob); // cierra el archivo
-    }
-     printf("Puerto de escucha local actual: %d ", puertolocal);
+   
     
     while (opcion != 0){ // Mientras que el usuario no digite 0 para salir, Haga:
         /* Interaccion con el usuario (Menú)*/
@@ -134,11 +121,29 @@ break;
                 break;
     /* Recibe el nombre del contacto que desea buscar, recorre el arreglo, compara y guarda e imprime la informacion de ese contacto mediante una variable */
             case 4:
+                     
+            
+                     /* Proceso de lectura del archivo del puerto local */
+    
+                    archivob2 = fopen("puertolocal.dat", "rt"); 
+                    if (archivob2 != NULL)
+                    {
+                        while (! feof(archivob2)) 
+                        {
+                        /*Guarda lo leido del archivo del puerto local en la variable para su posterior uso*/
+                        fgets(buffer, 20, archivob2);
+                        if (feof(archivob2)) break;
+                        sscanf(buffer, "%hd", &puertolocal);
+                        }
+                        fclose(archivob2); // cierra el archivo
+                    }
+                    printf("Puerto de escucha local actual: %d \n ", puertolocal);
+                     
                      printf ("Escriba el puerto de escucha local que desea guardar:\n ");
                      scanf ("%hu",&puertolocal);
-                     archivob = fopen("puertolocal.dat", "w+");
-                     fprintf (archivob, "%u\n", puertolocal);
-                     fclose(archivob); // cierra el archivo binario
+                     archivob2 = fopen("puertolocal.dat", "w+");
+                     fprintf (archivob2, "%u\n", puertolocal);
+                     fclose(archivob2); // cierra el archivo binario
                      printf ("El puerto local se ha guardado correctamente\n ");
                 break;
         }
@@ -157,5 +162,3 @@ archivob = fopen("agenda.dat", "wt"); // abre el archivo binario
     fclose(archivob); // cierra el archivo binario
  
 }
-
-    

@@ -119,7 +119,7 @@ fprintf(stderr,"No se pudo leer servidor\n\a");
 exit(1); // Manejo de errores el n devuelve un negativo si da error
 
 }
-printf("Mensaje : %s",buffer1);
+printf("\033[2K\r\033[01;34m""Mensaje :\033[00;34m %s",buffer1); // \033[00;37m formato color azul
 
 }
 
@@ -218,7 +218,7 @@ idwrite = write(idSocketCliente,buffer1,strlen(buffer1)); // escribe
     exit(1); // Manejo de errores.
 	}
 
-printf("Mensaje Enviado: %s ",buffer1);
+printf("\033[A\033[2K\033[01;31m""Mensaje Enviado: \033[31m %s ",buffer1); // \033[31m formato color rojo
 
 
 }

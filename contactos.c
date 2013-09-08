@@ -20,6 +20,7 @@ void main()
     int ultimocontacto = -1; /* Ultimo contacto. Inicialmente -1 porque no hay ninguno */
     int i; /* Para recorrer los datos con "for" */
     char contactoc [81]; /*Variable que va a contener el dato del nombre del contacto */
+    unsigned short int puertolocal;/*Variable que va a contener el dato del puerto local */
     unsigned short int puertoc;/*Variable que va a contener el numero del puerto del usuario a buscar*/
     char ipc[16];/*Variable que posee la direccion ip del usuario a buscar*/
 
@@ -64,6 +65,7 @@ archivob = fopen("agenda.dat", "rt");
         puts("1.- Nuevo Contacto");
         puts("2.- Ver agenda de contactos");
         puts("3.- Escoger los datos de un contacto para comunicarse");
+        puts("4.- Agregar o actualizar puerto de escucha local");
         puts("0.- Continuar al envio y recepcion de mensajes");
         scanf("%d", &opcion);
         getchar(); /*capta la tecla enter*/
@@ -113,6 +115,15 @@ break;
 
 
                      }
+                break;
+    /*Guardar el puerto de escucha local por parte del usuario */
+            case 4:
+                     printf ("Escriba el puerto de escucha local que desea guardar:\n ");
+                     scanf ("%hu",&puertolocal);
+                     archivob = fopen("puertolocal.dat", "w+");//Realiza la escritura del dato.En caso de que ya exista un puerto, lo actualiza. Solo se guarda un puerto en el archivo
+                     fprintf (archivob, "%u\n", puertolocal);
+                     fclose(archivob); 
+                     printf ("El puerto local se ha guardado correctamente\n ");
                 break;
         }
  

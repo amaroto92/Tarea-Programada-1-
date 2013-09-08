@@ -5,8 +5,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <string.h>
-#include <netdb.h> 
-#include <stdlib.h> 
+#include <netdb.h>
+#include <stdlib.h>
 #include <netinet/in.h>
 #include <signal.h>
 
@@ -33,7 +33,7 @@ if (idSocketServidor < 0)
 
 {
     fprintf(stderr,"Error creando socket servidor! \n\a");
-    exit(1); 
+    exit(1);
 } // Manejo de errores. El idSocketServidor da un numero negativo si tuvo algun problema.
 
 
@@ -65,8 +65,8 @@ DireccionSocketServidor.sin_port = htons(puertolocal); // htons(int) convierte d
 
 if(bind(idSocketServidor,(struct sockaddr *)&DireccionSocketServidor,sizeof (DireccionSocketServidor)) == -1) //Enlaza el socket con la direccion
 {
-	fprintf(stderr,"No se pudo unir el socket servidor\n\a");
-	exit(1); // Manejo de errores devuelve -1 si tuvo algun error en el bind.
+fprintf(stderr,"No se pudo unir el socket servidor\n\a");
+exit(1); // Manejo de errores devuelve -1 si tuvo algun error en el bind.
 }
 
 
@@ -101,7 +101,7 @@ fprintf(stderr,"No se pueden aceptar solicitudes servidor\n\a");
 exit(1); // Manejo de errores el idConexionCS devuelve un negativo si da error y lo mandamos al std error.
 }
 
-//5. Read. 
+//5. Read.
 
 printf(	"Llegue al read.\n");
 
@@ -111,7 +111,7 @@ int idread; // id del read
 
 bzero(buffer1,256); // limpia el buffer
 
-idread = read(idConexionCS,buffer1,255); // lee del buffer 
+idread = read(idConexionCS,buffer1,255); // lee del buffer
 
 if (idread < 0){
 
@@ -119,7 +119,8 @@ fprintf(stderr,"No se pudo leer servidor\n\a");
 exit(1); // Manejo de errores el n devuelve un negativo si da error
 
 }
-printf("\033[2K\r\033[01;34m""Mensaje :\033[00;34m %s",buffer1); // \033[00;37m formato color azul
+
+printf("\033[2K\r\033[01;34m""Mensaje :\033[00;34m %s",buffer1); // \033[00;37m azul
 
 }
 
@@ -142,7 +143,7 @@ void cliente (char *ipc, int puertoc) {
 printf("Este es el puerto cliente que mandaron desde el main: %d\n",puertoc); // Checkeo
 printf("Este es el ip cliente que mandaron desde el main: %s\n",ipc); // Checkeo
 
-int idSocketCliente; 
+int idSocketCliente;
 
 char buffer1[256];// Mensaje a enviar
 
@@ -159,7 +160,7 @@ idSocketCliente = socket (AF_INET, SOCK_STREAM, 0);
 
 if (idSocketCliente == -1){
     fprintf(stderr,"Error creando socket cliente! \n\a");
-    exit(1);  // Manejo de errores el idSocketCliente devuelve -1 si no se pudo inicializar.
+    exit(1); // Manejo de errores el idSocketCliente devuelve -1 si no se pudo inicializar.
 }
 
 
@@ -192,11 +193,11 @@ else	{
 
 
 if(hayconexion=connect(idSocketCliente,(struct sockaddr *) &DireccionSocketServidor,sizeof(DireccionSocketServidor))==-1)
-	{
-	fprintf(stderr,"No se pudo conectar cliente\n\a");
-	exit(1);
-	} // Manejo de errores con el connect.
-	}// fin del else.
+{
+fprintf(stderr,"No se pudo conectar cliente\n\a");
+exit(1);
+} // Manejo de errores con el connect.
+}// fin del else.
 } // Fin del while.
 
 
@@ -216,9 +217,9 @@ idwrite = write(idSocketCliente,buffer1,strlen(buffer1)); // escribe
   if (idwrite < 0){
     fprintf(stderr,"No se pudo escribir, cliente \n\a");
     exit(1); // Manejo de errores.
-	}
+}
 
-printf("\033[A\033[2K\033[01;31m""Mensaje Enviado: \033[31m %s ",buffer1); // \033[31m formato color rojo
+printf("\033[A\033[2K\033[01;31m""Mensaje Enviado: \033[31m %s ",buffer1); // \033[31m color rojo
 
 
 }
@@ -359,8 +360,6 @@ archivob = fopen("agenda.dat", "wt"); // abre el archivo binario
     }
     fclose(archivob); // cierra el archivo binario
  
-    
-
 int puertolocal;
 puts("\n Digite su puerto de escucha\n");
 scanf("%d", &puertolocal);
@@ -368,34 +367,35 @@ getchar(); /*capta la tecla enter*/
 
 
 
-// Division de procesos FORK 
 
-int IDproceso;		
+// Division de procesos FORK
+
+int IDproceso;	
 
 IDproceso = fork(); // Le asignamos el fork que devuelve un entero a una variable para identificar los procesos.
 
 
-	
+
 if ( IDproceso < 0 )
 {
-	fprintf(stderr,"No se pudo dividir el proceso\n\a");
-	exit(1);
+fprintf(stderr,"No se pudo dividir el proceso\n\a");
+exit(1);
 }
 
 if ( IDproceso == 0 ) // Proceso Hijo -> Cliente (escribe)
 {
 
-printf("soy el proceso hijo\n"); 
+printf("soy el proceso hijo\n");
 
 cliente(ipc, puertoc); // le mandamos el ip y el puerto que tomamos del contacto de la agenda.
-	
+
 }
 
 else // Proceso Padre -> Servidor (lee)
 
 {
 
-printf("soy el proceso padre\n"); 
+printf("soy el proceso padre\n");
 
 servidor(puertolocal);
 
@@ -403,4 +403,4 @@ servidor(puertolocal);
 
 
 
-}   
+} 

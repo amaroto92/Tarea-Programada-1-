@@ -362,8 +362,10 @@ archivob = fopen("agenda.dat", "wt"); // abre el archivo binario
     
 
 int puertolocal;
-//puertolocal = Agarra el puerto propio de un archivo. Falta esto.
-puertolocal = 14535; // puesto xxxxx para prueba.
+puts("\n Digite su puerto de escucha\n");
+scanf("%d", &puertolocal);
+getchar(); /*capta la tecla enter*/    
+
 
 
 // Division de procesos FORK 

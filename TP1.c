@@ -20,24 +20,29 @@ printf("Este es el puerto servidor que mandaron desde el main: %d\n",puertolocal
 
 // 1. Inicializar el Socket.
 
-int idSocketServidor;
+int idSocket;
+struct sockaddr_in DireccionSocketServidor;// Estructura tipo sockaddr_in para el servidor. //
+struct sockaddr_in DireccionSocketCliente; // Estructura tipo sockaddr_in para el cliente. //
+int idConexionCS; // Crea ID para la conexion Cliente-Servidor
+int idread; // id del read
+
 
 //PARAMETROS
 //AF_INET: deja que se conecte entre computadoras distintas.
 //SOCK_STREAM: indica que el socket es orientado a conexion.
 //3er parametro se pone 0.
 
-idSocketServidor = socket (AF_INET, SOCK_STREAM, 0);
+idSocket = socket (AF_INET, SOCK_STREAM, 0);
 
-if (idSocketServidor < 0)
+if (idSocket < 0)
 
 {
     fprintf(stderr,"Error creando socket servidor! \n\a");
     exit(1);
-} // Manejo de errores. El idSocketServidor da un numero negativo si tuvo algun problema.
+} // Manejo de errores. El idSocket da un numero negativo si tuvo algun problema.
 
 
-
+// bzero((char *) &DireccionSocketServidor, sizeof(DireccionSocketServidor));
 
 
 
@@ -45,10 +50,6 @@ if (idSocketServidor < 0)
 //Ya el socket esta inicializado y ahora lo vamos a atender.
 //Su parametro es una estructura sockaddr_in que contiene lo siguiente:
 
-printf(	"servidor..2\n");
-
-struct sockaddr_in DireccionSocketServidor;// Estructura tipo sockaddr_in para el servidor. //
-struct sockaddr_in DireccionSocketCliente; // Estructura tipo sockaddr_in para el cliente. //
 
 
 DireccionSocketServidor.sin_family = AF_INET;
@@ -63,7 +64,7 @@ DireccionSocketServidor.sin_port = htons(puertolocal); // htons(int) convierte d
 
 
 
-if(bind(idSocketServidor,(struct sockaddr *)&DireccionSocketServidor,sizeof (DireccionSocketServidor)) == -1) //Enlaza el socket con la direccion
+if(bind(idSocket,(struct sockaddr *)&DireccionSocketServidor,sizeof (DireccionSocketServidor)) == -1) //Enlaza el socket con la direccion
 {
 fprintf(stderr,"No se pudo unir el socket servidor\n\a");
 exit(1); // Manejo de errores devuelve -1 si tuvo algun error en el bind.
@@ -75,10 +76,10 @@ exit(1); // Manejo de errores devuelve -1 si tuvo algun error en el bind.
 //-ID del socket
 //-Numero maximo de solicitudes que pueda tener en espera en este caso 8.
 
-printf(	"servidor..3\n");
 
 
-if(listen(idSocketServidor,8) == -1)
+
+if(listen(idSocket,8) == -1)
 {
 fprintf(stderr,"No se escuchar solicitudes servidor\n\a");
 exit(1); // Manejo de errores el listen devuelve -1 si da algun error.
@@ -87,13 +88,11 @@ exit(1); // Manejo de errores el listen devuelve -1 si da algun error.
 
 //4. Accept. El servidor acepta el cliente, el primero en la cola. Se crea un ID de la conexion de ambos. Todas las variables que inicializamos a continuacion son parametros del Accept.
 
-printf(	"servidor..4\n");
 
-int idConexionCS; // Crea ID para la conexion Cliente-Servidor
 
 socklen_t largodircliente = sizeof(DireccionSocketCliente); // Largo de estructura del cliente.
 
-idConexionCS = accept (idSocketServidor,(struct sockaddr *) &DireccionSocketCliente, &largodircliente); // Hace un cast de sockaddr_in a sockadrr.
+idConexionCS = accept (idSocket,(struct sockaddr *) &DireccionSocketCliente, &largodircliente); // Hace un cast de sockaddr_in a sockadrr.
 
 if (idConexionCS < 0)
 {
@@ -103,11 +102,11 @@ exit(1); // Manejo de errores el idConexionCS devuelve un negativo si da error y
 
 //5. Read.
 
-printf(	"Llegue al read.\n");
+
 
 while(1){ // ciclo infinito
 
-int idread; // id del read
+
 
 bzero(buffer1,256); // limpia el buffer
 
@@ -136,35 +135,44 @@ printf("\033[2K\r\033[01;34m""Mensaje :\033[00;34m %s",buffer1); // \033[00;37m 
 
 // Cliente Proceso Hijo.
 
+
+
+
+void cliente (char *ipcliente, int puertocliente) {
 // 1. Inicializar el Socket.
 
-void cliente (char *ipc, int puertoc) {
+struct sockaddr_in DireccionSocketServidor;
 
-printf("Este es el puerto cliente que mandaron desde el main: %d\n",puertoc); // Checkeo
-printf("Este es el ip cliente que mandaron desde el main: %s\n",ipc); // Checkeo
+struct hostent *ip; // estructura que recibirá información sobre el nodo remoto //
 
-int idSocketCliente;
+int idSocket;
+int idwrite; // Identificador para el write
 
 char buffer1[256];// Mensaje a enviar
 
 int hayconexion; // variable para salirse del while infinito cuando hay alguna conexion.
 
-struct hostent *ip; // estructura que recibirá información sobre el nodo remoto //
 
-idSocketCliente = socket (AF_INET, SOCK_STREAM, 0);
+printf("Este es el puerto cliente que mandaron desde el main: %d\n",puertocliente); // Checkeo
+printf("Este es el ip cliente que mandaron desde el main: %s\n",ipcliente); // Checkeo
+
+
+
+
+idSocket = socket (AF_INET, SOCK_STREAM, 0);
 //PARAMETROS
 //AF_INET: deja que se conecte entre computadoras distintas.
 //SOCK_STREAM: indica que el socket es orientado a conexion.
 //3er parametro se pone 0.
 
 
-if (idSocketCliente == -1){
+if (idSocket == -1){
     fprintf(stderr,"Error creando socket cliente! \n\a");
     exit(1); // Manejo de errores el idSocketCliente devuelve -1 si no se pudo inicializar.
 }
 
 
-ip = gethostbyname(ipc); // Agarra la direccion ip en el formato deseado.
+ip = gethostbyname(ipcliente); // Agarra la direccion ip en el formato deseado.
 
 if (ip == NULL) {
 fprintf(stderr,"Error con la direccion ip. \a\n");
@@ -174,17 +182,25 @@ exit(1); // Manejo de errores con la direccion ip.
 //2. Connect
 
 
-struct sockaddr_in DireccionSocketServidor;
+
+
+//bzero((char *) &DireccionSocketServidor, sizeof(DireccionSocketServidor));
 
 DireccionSocketServidor.sin_family = AF_INET;
-  
-DireccionSocketServidor.sin_port = htons(puertoc);// Puerto del cliente
 
-DireccionSocketServidor.sin_addr = *((struct in_addr *)ip->h_addr); // Direccion IP del cliente
+bcopy((char *)ip->h_addr,(char*)&DireccionSocketServidor.sin_addr.s_addr,ip->h_length); // Direccion IP del cliente
+
+  
+DireccionSocketServidor.sin_port = htons(puertocliente);// Puerto del cliente
+
 
 while(1){ //while infinito para espera de conexion con el cliente.
 
-if (hayconexion > 0){ // Si hay una conexion: salgase del while infinito.
+if (hayconexion >= 0){ // Si hay una conexion: salgase del while infinito.
+
+puts("HAY CONEXION \n");
+
+
 
 break;
 }
@@ -192,7 +208,7 @@ break;
 else	{
 
 
-if(hayconexion=connect(idSocketCliente,(struct sockaddr *) &DireccionSocketServidor,sizeof(DireccionSocketServidor))==-1)
+if(hayconexion=connect(idSocket,(struct sockaddr *) &DireccionSocketServidor,sizeof(DireccionSocketServidor))==-1)
 {
 fprintf(stderr,"No se pudo conectar cliente\n\a");
 exit(1);
@@ -205,7 +221,7 @@ exit(1);
 
 while(1){
 
-int idwrite; // Identificador para el write
+
 
 puts("Escriba su mensaje: \n");
 
@@ -213,7 +229,9 @@ bzero(buffer1,256); // Limpia el buffer
 
 fgets(buffer1,255,stdin); // Agarra datos del stdin
 
-idwrite = write(idSocketCliente,buffer1,strlen(buffer1)); // escribe
+
+
+idwrite = write(idSocket,buffer1,strlen(buffer1)); // escribe
   if (idwrite < 0){
     fprintf(stderr,"No se pudo escribir, cliente \n\a");
     exit(1); // Manejo de errores.
@@ -251,8 +269,8 @@ void main()
     int ultimocontacto = -1; /* Ultimo contacto. Inicialmente -1 porque no hay ninguno */
     int i; /* Para recorrer los datos con "for" */
     char contactoc [81]; /*Variable que va a contener el dato del nombre del contacto */
-    unsigned short int puertoc;/*Variable que va a contener el numero del puerto del usuario a buscar*/
-    char ipc[16];/*Variable que posee la direccion ip del usuario a buscar*/
+    unsigned short int puertocliente;/*Variable que va a contener el numero del puerto del usuario a buscar*/
+    char ipcliente[16];/*Variable que posee la direccion ip del usuario a buscar*/
 
 /*Empieza el proceso de lectura del archivo que contiene los contactos */
 
@@ -334,12 +352,12 @@ break;
                     if (strcmp (buffer, agenda[i].contacto) == 0) // strcmp, compara strings, si son iguales retorna 0.
                     {
                         strcpy(contactoc,agenda[i].contacto);
-                        puertoc=agenda[i].puerto;
-                        strcpy(ipc,agenda[i].ip);
+                        puertocliente=agenda[i].puerto;
+                        strcpy(ipcliente,agenda[i].ip);
                         printf("Tenemos los siguientes datos en memoria para comunicarse con:\n");	
                         printf("Nombre: %s \n",contactoc);
-                        printf("Puerto: %hu \n",puertoc);
-                        printf("Direccion IP: %s \n",ipc);
+                        printf("Puerto: %hu \n",puertocliente);
+                        printf("Direccion IP: %s \n",ipcliente);
                     printf("Si desea empezar a comunicarse con esta persona digite 0 \n ");
 
 
@@ -387,7 +405,7 @@ if ( IDproceso == 0 ) // Proceso Hijo -> Cliente (escribe)
 
 printf("soy el proceso hijo\n");
 
-cliente(ipc, puertoc); // le mandamos el ip y el puerto que tomamos del contacto de la agenda.
+cliente(ipcliente, puertocliente); // le mandamos el ip y el puerto que tomamos del contacto de la agenda.
 
 }
 

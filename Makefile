@@ -1,4 +1,4 @@
 CFLAGS=-Wall -g
 
-clean:
-	rm -f TP1
+clean:											rm -f TP1	
+

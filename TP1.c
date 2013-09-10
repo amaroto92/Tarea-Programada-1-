@@ -201,7 +201,7 @@ break;
 
 else{
 
-if(hayconexion=connect(idSocket,(struct sockaddr *) &DireccionSocketServidor,sizeof(DireccionSocketServidor))==-1)
+if((hayconexion=connect(idSocket,(struct sockaddr *) &DireccionSocketServidor,sizeof(DireccionSocketServidor))==-1))
 {
 fprintf(stderr,"No se pudo conectar cliente\n\a");
 exit(1);
@@ -241,7 +241,7 @@ printf("\033[A\033[2K\033[01;31m""Mensaje Enviado: \033[31m %s ",buffer1); // \0
 // Funcion de entrada MAIN:
 
 
-void main()
+int main()
 {
  
  /* Se define la estructura y se crea un arreglo de tipo struct llamado agenda donde van a ir todos los contactos */
@@ -440,6 +440,6 @@ servidor(puertolocal);
 
 }
 
-
+return 0;
 
 } 

@@ -13,14 +13,14 @@
 
 void servidor(int puertolocal){ // Servidor Proceso Padre.
 
-char buffer1[256];
+char buffer1[256]; // buffer de memoria que contiene el string de lectura.
 
 printf("Este es el puerto servidor que mandaron desde el main: %d\n",puertolocal); // Para checkear
 
 
 // 1. Inicializar el Socket.
 
-int idSocket;
+int idSocketServidor;
 struct sockaddr_in DireccionSocketServidor;// Estructura tipo sockaddr_in para el servidor. //
 struct sockaddr_in DireccionSocketCliente; // Estructura tipo sockaddr_in para el cliente. //
 int idConexionCS; // Crea ID para la conexion Cliente-Servidor
@@ -32,9 +32,10 @@ int idread; // id del read
 //SOCK_STREAM: indica que el socket es orientado a conexion.
 //3er parametro se pone 0.
 
-idSocket = socket (AF_INET, SOCK_STREAM, 0);
 
-if (idSocket < 0)
+idSocketServidor = socket (AF_INET, SOCK_STREAM, 0);
+
+if (idSocketServidor < 0)
 
 {
     fprintf(stderr,"Error creando socket servidor! \n\a");
@@ -42,7 +43,7 @@ if (idSocket < 0)
 } // Manejo de errores. El idSocket da un numero negativo si tuvo algun problema.
 
 
-// bzero((char *) &DireccionSocketServidor, sizeof(DireccionSocketServidor));
+bzero((char *) &DireccionSocketServidor, sizeof(DireccionSocketServidor));//borra los datos de DireccionSocketServidor.
 
 
 
@@ -64,7 +65,7 @@ DireccionSocketServidor.sin_port = htons(puertolocal); // htons(int) convierte d
 
 
 
-if(bind(idSocket,(struct sockaddr *)&DireccionSocketServidor,sizeof (DireccionSocketServidor)) == -1) //Enlaza el socket con la direccion
+if(bind(idSocketServidor,(struct sockaddr *)&DireccionSocketServidor,sizeof (DireccionSocketServidor)) == -1) //Enlaza el socket con la direccion
 {
 fprintf(stderr,"No se pudo unir el socket servidor\n\a");
 exit(1); // Manejo de errores devuelve -1 si tuvo algun error en el bind.
@@ -79,7 +80,7 @@ exit(1); // Manejo de errores devuelve -1 si tuvo algun error en el bind.
 
 
 
-if(listen(idSocket,8) == -1)
+if(listen(idSocketServidor,8) == -1)
 {
 fprintf(stderr,"No se escuchar solicitudes servidor\n\a");
 exit(1); // Manejo de errores el listen devuelve -1 si da algun error.
@@ -92,7 +93,7 @@ exit(1); // Manejo de errores el listen devuelve -1 si da algun error.
 
 socklen_t largodircliente = sizeof(DireccionSocketCliente); // Largo de estructura del cliente.
 
-idConexionCS = accept (idSocket,(struct sockaddr *) &DireccionSocketCliente, &largodircliente); // Hace un cast de sockaddr_in a sockadrr.
+idConexionCS = accept (idSocketServidor,(struct sockaddr *) &DireccionSocketCliente, &largodircliente); // Hace un cast de sockaddr_in a sockadrr.
 
 if (idConexionCS < 0)
 {
@@ -130,9 +131,6 @@ printf("\033[2K\r\033[01;34m""Mensaje :\033[00;34m %s",buffer1); // \033[00;37m 
 
 
 
-
-
-
 // Cliente Proceso Hijo.
 
 
@@ -141,12 +139,13 @@ printf("\033[2K\r\033[01;34m""Mensaje :\033[00;34m %s",buffer1); // \033[00;37m 
 void cliente (char *ipcliente, int puertocliente) {
 // 1. Inicializar el Socket.
 
-struct sockaddr_in DireccionSocketServidor;
+struct sockaddr_in DireccionSocketServidor;// estructura que contiene puerto e ip.
 
 struct hostent *ip; // estructura que recibirá información sobre el nodo remoto //
 
-int idSocket;
-int idwrite; // Identificador para el write
+int idSocket;// Identificador para el socket que se va a crear.
+
+int idwrite; // Identificador para el write y poder manejar errores.
 
 char buffer1[256];// Mensaje a enviar
 
@@ -157,9 +156,8 @@ printf("Este es el puerto cliente que mandaron desde el main: %d\n",puertoclient
 printf("Este es el ip cliente que mandaron desde el main: %s\n",ipcliente); // Checkeo
 
 
-
-
 idSocket = socket (AF_INET, SOCK_STREAM, 0);
+
 //PARAMETROS
 //AF_INET: deja que se conecte entre computadoras distintas.
 //SOCK_STREAM: indica que el socket es orientado a conexion.
@@ -182,9 +180,7 @@ exit(1); // Manejo de errores con la direccion ip.
 //2. Connect
 
 
-
-
-//bzero((char *) &DireccionSocketServidor, sizeof(DireccionSocketServidor));
+bzero((char *) &DireccionSocketServidor, sizeof(DireccionSocketServidor)); // limpia la estructura.
 
 DireccionSocketServidor.sin_family = AF_INET;
 
@@ -200,13 +196,10 @@ if (hayconexion >= 0){ // Si hay una conexion: salgase del while infinito.
 
 puts("HAY CONEXION \n");
 
-
-
 break;
 }
 
-else	{
-
+else{
 
 if(hayconexion=connect(idSocket,(struct sockaddr *) &DireccionSocketServidor,sizeof(DireccionSocketServidor))==-1)
 {
@@ -219,9 +212,7 @@ exit(1);
 
 //3. Write
 
-while(1){
-
-
+while(1){ // while infinito para escribir muchas veces.
 
 puts("Escriba su mensaje: \n");
 
@@ -229,10 +220,10 @@ bzero(buffer1,256); // Limpia el buffer
 
 fgets(buffer1,255,stdin); // Agarra datos del stdin
 
-
-
 idwrite = write(idSocket,buffer1,strlen(buffer1)); // escribe
-  if (idwrite < 0){
+
+  
+if (idwrite < 0){
     fprintf(stderr,"No se pudo escribir, cliente \n\a");
     exit(1); // Manejo de errores.
 }
@@ -263,6 +254,7 @@ void main()
     } agenda [1000]; // La agenda tendra la capacidad de guardar 1000 contactos
  
     FILE* archivob; /* El archivo de tipo file que va a contener a los contactos */
+    FILE* archivob2;/* El archivo de tipo file que va a contener el puerto de escucha local */
     int opcion;/* La opcion escogida del menu */
     opcion=5; // se inicializa en cualquier valor para que no tome el valor default de 0
     char buffer[200]; /*Lee del teclado*/
@@ -271,7 +263,7 @@ void main()
     char contactoc [81]; /*Variable que va a contener el dato del nombre del contacto */
     unsigned short int puertocliente;/*Variable que va a contener el numero del puerto del usuario a buscar*/
     char ipcliente[16];/*Variable que posee la direccion ip del usuario a buscar*/
-
+	unsigned short int puertolocal;/*Variable que va a contener el dato del puerto local */
 /*Empieza el proceso de lectura del archivo que contiene los contactos */
 
 archivob = fopen("agenda.dat", "rt");
@@ -313,6 +305,7 @@ archivob = fopen("agenda.dat", "rt");
         puts("1.- Nuevo Contacto");
         puts("2.- Ver agenda de contactos");
         puts("3.- Escoger los datos de un contacto para comunicarse");
+	puts("4.- Agregar o actualizar puerto de escucha local");
         puts("0.- Continuar al envio y recepcion de mensajes");
         scanf("%d", &opcion);
         getchar(); /*capta la tecla enter*/
@@ -363,6 +356,37 @@ break;
 
                      }
                 break;
+
+ 		case 4:
+                     
+            
+                     /* Proceso de lectura del archivo del puerto local */
+    
+                    archivob2 = fopen("puertolocal.dat", "rt");
+                    if (archivob2 != NULL)
+                    {
+                        while (! feof(archivob2))
+                        {
+                        /*Guarda lo leido del archivo del puerto local en la variable para su posterior uso*/
+                        fgets(buffer, 20, archivob2);
+                        if (feof(archivob2)) break;
+                        sscanf(buffer, "%hd", &puertolocal);
+                        }
+                        fclose(archivob2); // cierra el archivo
+                    }
+                    printf("Puerto de escucha local actual: %d \n ", puertolocal);
+                     
+                     printf ("Escriba el puerto de escucha local que desea guardar:\n ");
+                     scanf ("%hu",&puertolocal);
+                     archivob2 = fopen("puertolocal.dat", "w+");
+                     fprintf (archivob2, "%u\n", puertolocal);
+                     fclose(archivob2); // cierra el archivo binario
+                     printf ("El puerto local se ha guardado correctamente\n ");
+                break;
+
+
+
+
         }
  
     } //Este ciclo no finaliza hasta que el usuario escriba el digito 0 en pantalla. Una vez hecho guarda los contactos en el archivo binario donde esta el arreglo de tipo struct.
@@ -378,12 +402,6 @@ archivob = fopen("agenda.dat", "wt"); // abre el archivo binario
     }
     fclose(archivob); // cierra el archivo binario
  
-int puertolocal;
-puts("\n Digite su puerto de escucha\n");
-scanf("%d", &puertolocal);
-getchar(); /*capta la tecla enter*/    
-
-
 
 
 // Division de procesos FORK
@@ -403,9 +421,12 @@ exit(1);
 if ( IDproceso == 0 ) // Proceso Hijo -> Cliente (escribe)
 {
 
+
+
 printf("soy el proceso hijo\n");
 
 cliente(ipcliente, puertocliente); // le mandamos el ip y el puerto que tomamos del contacto de la agenda.
+
 
 }
 
